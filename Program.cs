@@ -67,7 +67,7 @@ namespace TicTacToe
         }
     }
 
-    internal enum CellState
+    internal enum State
     {
         Empty,
         Circle,
@@ -82,7 +82,7 @@ namespace TicTacToe
         /// <summary>
         /// 各セルの状態
         /// </summary>
-        internal Dictionary<int, CellState> CellStates = [];
+        internal List<CellState> CellStates = [];
 
         /// <summary>
         /// 全セルの数
@@ -111,8 +111,8 @@ namespace TicTacToe
 
                     // 行と列からセル番号を計算
                     int cellNumber = (row - 1) * HORIZONTAL_COUNT + col;
-                    var targetState = this.CellStates.First(x => x.Key == cellNumber);
-                    Console.Write($" {this.ConvertStateToSymbol(targetState)} ");
+                    var targetState = this.CellStates.First(x => x.CellNumber == cellNumber);
+                    Console.Write($" {targetState.ConvertStateToSymbol()} ");
                 }
                 // 改行と行間のライン
                 Console.WriteLine("|");
@@ -124,7 +124,7 @@ namespace TicTacToe
         {
             for (int i = 1; i <= this.CellCount; i++)
             {
-                this.CellStates.Add(i, CellState.Empty);
+                this.CellStates.Add(new CellState(i, State.Empty));
             }
         }
 
@@ -136,14 +136,27 @@ namespace TicTacToe
             }
             Console.WriteLine("+");
         }
+    }
 
-        private string ConvertStateToSymbol(KeyValuePair<int, CellState> state)
+    internal class CellState
+    {
+        internal int CellNumber;
+
+        internal State State;
+
+        internal CellState(int cellNumber, State state)
         {
-            return state.Value switch
+            this.CellNumber = cellNumber;
+            this.State = state;
+        }
+
+        internal string ConvertStateToSymbol()
+        {
+            return this.State switch
             {
-                CellState.Empty => state.Key.ToString(),
-                CellState.Circle => "○",
-                CellState.Cross => "×",
+                State.Empty => this.CellNumber.ToString(),
+                State.Circle => "○",
+                State.Cross => "×",
                 _ => string.Empty
             };
         }
