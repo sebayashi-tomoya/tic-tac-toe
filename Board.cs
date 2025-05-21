@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using TicTacToe.Enums;
 
 internal class Board
@@ -45,8 +46,12 @@ internal class Board
             Console.WriteLine("|");
             Board.WriteRowLine();
         }
+    }
 
-        Console.WriteLine($"{this.CellCount - (this.CellCount - 1)} ~ {this.CellCount} のどこに置きますか？");
+    internal void SetState(CellState insertState)
+    {
+        this.CellStates.RemoveAll(x => x.CellNumber.Equals(insertState.CellNumber));
+        this.CellStates.Add(insertState);
     }
 
     private void InitializeStates()

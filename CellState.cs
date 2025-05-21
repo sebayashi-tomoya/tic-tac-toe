@@ -4,17 +4,17 @@ internal class CellState
 {
     internal int CellNumber;
 
-    internal CellValueType State;
+    internal CellValueType ValueType;
 
     internal CellState(int cellNumber, CellValueType state)
     {
         this.CellNumber = cellNumber;
-        this.State = state;
+        this.ValueType = state;
     }
 
     internal string GetSymbol()
     {
-        return this.State switch
+        return this.ValueType switch
         {
             CellValueType.Empty => this.CellNumber.ToString(),
             CellValueType.Circle => "○",
