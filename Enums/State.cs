@@ -1,6 +1,6 @@
 namespace TicTacToe.Enums
 {
-    internal enum State
+    internal enum CellValueType
     {
         Empty,
         Circle,

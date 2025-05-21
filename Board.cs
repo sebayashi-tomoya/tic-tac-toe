@@ -39,7 +39,7 @@ internal class Board
                 int cellNumber = (row - 1) * HORIZONTAL_COUNT + col;
                 // セル番号に該当するStateを表示用文字に変換
                 var targetState = this.CellStates.First(x => x.CellNumber == cellNumber);
-                Console.Write($" {targetState.ConvertStateToSymbol()} ");
+                Console.Write($" {targetState.GetSymbol()} ");
             }
             // 改行と行間のライン
             Console.WriteLine("|");
@@ -53,7 +53,7 @@ internal class Board
     {
         for (int i = 1; i <= this.CellCount; i++)
         {
-            this.CellStates.Add(new CellState(i, State.Empty));
+            this.CellStates.Add(new CellState(i, CellValueType.Empty));
         }
     }
 
