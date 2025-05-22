@@ -5,19 +5,17 @@ internal class GameMaster
 {
     private readonly Board Board;
 
+    private IPlayer? firstPlayer;
+
+    private IPlayer? secondPlayer;
+
     internal GameMaster()
     {
         this.Board = new Board();
     }
 
-    internal void Start()
+    internal void SelectLevel()
     {
-
-        Console.WriteLine("○×ゲームへようこそ！");
-
-        IPlayer firstPlayer = new Player();
-        IPlayer secondPlayer = new WeakCpu();
-
         // 難易度選択
         while (true)
         {
@@ -34,6 +32,20 @@ internal class GameMaster
                 Console.WriteLine("入力エラーです");
                 Console.WriteLine("半角で0または1を入力してください");
             }
+        }
+    }
+
+    internal void SetPlayers()
+    {
+        this.firstPlayer = new Player();
+        this.secondPlayer = new WeakCpu();
+    }
+
+    internal void Start()
+    {
+        if (this.firstPlayer is null || this.secondPlayer is null)
+        {
+            throw new InvalidOperationException();
         }
 
         Console.Write("ゲームを開始します！Enterキーを押して下さい");
