@@ -3,7 +3,7 @@ using TicTacToe.Interfaces;
 
 internal class Player : IPlayer
 {
-    public CellState Place()
+    public CellState Place(IEnumerable<int> emptyCells)
     {
         while (true)
         {

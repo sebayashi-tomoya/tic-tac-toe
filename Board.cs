@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using TicTacToe.Enums;
+using TicTacToe.Interfaces;
 
 internal class Board
 {
@@ -7,6 +8,10 @@ internal class Board
     /// 各セルの状態
     /// </summary>
     internal List<CellState> CellStates = [];
+
+    internal IEnumerable<int> EmptyCells => this.CellStates
+        .Where(x => CellValueType.Empty.Equals(x.ValueType))
+        .Select(x => x.CellNumber);
 
     internal Board()
     {
@@ -39,8 +44,9 @@ internal class Board
         }
     }
 
-    internal void SetState(CellState insertState)
+    internal void SetState(IPlayer player)
     {
+        var insertState = player.Place(this.EmptyCells);
         this.CellStates.RemoveAll(x => x.CellNumber.Equals(insertState.CellNumber));
         this.CellStates.Add(insertState);
     }

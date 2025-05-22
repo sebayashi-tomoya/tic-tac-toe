@@ -16,6 +16,7 @@ internal class GameMaster
         Console.WriteLine("○×ゲームへようこそ！");
 
         IPlayer firstPlayer = new Player();
+        IPlayer secondPlayer = new WeakCpu();
 
         // 難易度選択
         while (true)
@@ -41,14 +42,23 @@ internal class GameMaster
         // 初期盤面の表示
         this.Board.WriteBoard();
 
-        for (int i = 0; i < BoardSettings.CELL_COUNT; i++)
+        while (true)
         {
-            this.Board.SetState(firstPlayer.Place());
-            this.Board.WriteBoard();
+            // 先攻プレイヤーのターン
+            if (this.PlayTurn(firstPlayer)) break;
+            // 後攻プレイヤーのターン
+            if (this.PlayTurn(secondPlayer)) break;
         }
 
         Console.Clear();
         Console.WriteLine("ゲーム終了です！");
+    }
+
+    private bool PlayTurn(IPlayer player)
+    {
+        this.Board.SetState(player);
+        this.Board.WriteBoard();
+        return !Board.EmptyCells.Any();
     }
 
     /// <summary>
