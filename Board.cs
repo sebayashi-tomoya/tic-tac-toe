@@ -3,22 +3,13 @@ using TicTacToe.Enums;
 
 internal class Board
 {
-    private static readonly int VERTICAL_COUNT = 3;
-    private static readonly int HORIZONTAL_COUNT = 3;
-
     /// <summary>
     /// 各セルの状態
     /// </summary>
     internal List<CellState> CellStates = [];
 
-    /// <summary>
-    /// 全セルの数
-    /// </summary>
-    private readonly int CellCount;
-
     internal Board()
     {
-        this.CellCount = VERTICAL_COUNT * HORIZONTAL_COUNT;
         this.InitializeStates();
     }
 
@@ -30,14 +21,14 @@ internal class Board
         Board.WriteRowLine();
 
         // 各セルの値
-        for (int row = 1; row <= VERTICAL_COUNT; row++)
+        for (int row = 1; row <= BoardSettings.BOARD_SIZE; row++)
         {
-            for (int col = 1; col <= HORIZONTAL_COUNT; col++)
+            for (int col = 1; col <= BoardSettings.BOARD_SIZE; col++)
             {
                 Console.Write("|");
 
                 // 行と列からセル番号を計算
-                int cellNumber = (row - 1) * HORIZONTAL_COUNT + col;
+                int cellNumber = (row - 1) * BoardSettings.BOARD_SIZE + col;
                 // セル番号に該当するStateを表示用文字に変換
                 var targetState = this.CellStates.First(x => x.CellNumber == cellNumber);
                 Console.Write($" {targetState.GetSymbol()} ");
@@ -56,7 +47,7 @@ internal class Board
 
     private void InitializeStates()
     {
-        for (int i = 1; i <= this.CellCount; i++)
+        for (int i = 1; i <= BoardSettings.CELL_COUNT; i++)
         {
             this.CellStates.Add(new CellState(i, CellValueType.Empty));
         }
@@ -64,7 +55,7 @@ internal class Board
 
     private static void WriteRowLine()
     {
-        for (int i = 0; i < HORIZONTAL_COUNT; i++)
+        for (int i = 0; i < BoardSettings.BOARD_SIZE; i++)
         {
             Console.Write("+---");
         }
