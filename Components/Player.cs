@@ -5,6 +5,10 @@ namespace TicTacToe.Components;
 
 internal class Player : IPlayer
 {
+    public string Name => "あなた";
+
+    public CellValueType InputType => CellValueType.Circle;
+
     public CellState Place(IEnumerable<int> emptyCells)
     {
         while (true)

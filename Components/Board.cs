@@ -5,20 +5,36 @@ namespace TicTacToe.Components;
 
 internal class Board
 {
-    /// <summary>
-    /// 各セルの状態
-    /// </summary>
+    #region フィールド、プロパティ
+
+    /// <summary>各セルの状態</summary>
     internal List<CellState> CellStates = [];
 
-    internal IEnumerable<int> EmptyCells => this.CellStates
+    /// <summary>空白セルのセル番号リスト</summary>
+    private IEnumerable<int> EmptyCells => this.CellStates
         .Where(x => CellValueType.Empty.Equals(x.ValueType))
         .Select(x => x.CellNumber);
+
+    /// <summary>勝ちパターン</summary>
+    private readonly List<int[]> winPatterns = [];
+
+    #endregion
+
+    #region コンストラクタ
 
     internal Board()
     {
         this.InitializeStates();
+        this.InitializeWinPatterns();
     }
 
+    #endregion
+
+    #region 外部公開メソッド
+
+    /// <summary>
+    /// 盤面を表示する
+    /// </summary>
     internal void WriteBoard()
     {
         Console.Clear();
@@ -45,12 +61,29 @@ internal class Board
         }
     }
 
-    internal bool PlayTurn(IPlayer player)
+    /// <summary>
+    /// 1ターンの処理
+    /// </summary>
+    internal TurnResult PlayTurn(IPlayer player)
     {
         this.SetState(player);
         this.WriteBoard();
-        return !this.EmptyCells.Any();
+
+        if (this.CheckWinner(player))
+        {
+            return TurnResult.Win;
+        }
+        if (!this.EmptyCells.Any())
+        {
+            return TurnResult.Draw;
+        }
+
+        return TurnResult.Continuation;
     }
+
+    #endregion
+
+    #region privateメソッド
 
     private void SetState(IPlayer player)
     {
@@ -67,6 +100,67 @@ internal class Board
         }
     }
 
+    private void InitializeWinPatterns()
+    {
+        // 横・縦のパターン
+        for (int i = 0; i < BoardSettings.BOARD_SIZE; i++)
+        {
+            var rowWinPattern = new int[BoardSettings.BOARD_SIZE];
+            var colWinPattern = new int[BoardSettings.BOARD_SIZE];
+
+            for (int j = 0; j < BoardSettings.BOARD_SIZE; j++)
+            {
+                rowWinPattern[j] = this.ConvertToCellNum(i, j);
+                colWinPattern[j] = this.ConvertToCellNum(j, i);
+            }
+            this.winPatterns.Add(rowWinPattern);
+            this.winPatterns.Add(colWinPattern);
+        }
+
+        // 左上から右下への斜め
+        var mainDiagonal = new int[BoardSettings.BOARD_SIZE];
+        for (int i = 0; i < BoardSettings.BOARD_SIZE; i++)
+        {
+            mainDiagonal[i] = this.ConvertToCellNum(i, i);
+        }
+        this.winPatterns.Add(mainDiagonal);
+
+        // 右上から左下への斜め
+        var antiDiagonal = new int[BoardSettings.BOARD_SIZE];
+        for (int i = 0; i < BoardSettings.BOARD_SIZE; i++)
+        {
+            antiDiagonal[i] = this.ConvertToCellNum(i, BoardSettings.BOARD_SIZE - 1 - i);
+        }
+        this.winPatterns.Add(antiDiagonal);
+    }
+
+    private bool CheckWinner(IPlayer player)
+    {
+        foreach (var pattern in this.winPatterns)
+        {
+            var targetCellStates = new List<CellState>();
+            foreach (var cellNum in pattern)
+            {
+                targetCellStates.Add(
+                    this.CellStates.First(x => x.CellNumber.Equals(cellNum))
+                );
+            }
+
+            var inputtedCells = targetCellStates.Where(x => x.ValueType.Equals(player.InputType));
+            if (inputtedCells.Count() == BoardSettings.BOARD_SIZE) return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// 2次元座標からセル番号に変換
+    /// </summary>
+    private int ConvertToCellNum(int row, int col)
+    {
+        return row * BoardSettings.BOARD_SIZE + col + 1;
+    }
+
     private static void WriteRowLine()
     {
         for (int i = 0; i < BoardSettings.BOARD_SIZE; i++)
@@ -75,4 +169,6 @@ internal class Board
         }
         Console.WriteLine("+");
     }
+
+    #endregion
 }

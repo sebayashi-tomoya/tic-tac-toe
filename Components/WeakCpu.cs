@@ -1,9 +1,14 @@
+using TicTacToe.Enums;
 using TicTacToe.Interfaces;
 
 namespace TicTacToe.Components;
 
 internal class WeakCpu : IPlayer
 {
+    public string Name => "CPU";
+
+    public CellValueType InputType => CellValueType.Cross;
+
     public CellState Place(IEnumerable<int> emptyCells)
     {
         // 空白セルからランダムに一つセルを抽出する

@@ -1,4 +1,5 @@
 using TicTacToe.Components;
+using TicTacToe.Enums;
 using TicTacToe.Interfaces;
 
 internal class GameMaster
@@ -48,22 +49,46 @@ internal class GameMaster
             throw new InvalidOperationException();
         }
 
-        Console.Write("ゲームを開始します！Enterキーを押して下さい");
+        Console.WriteLine("ゲームを開始します!");
+        Console.Write("Enterキーを押して下さい");
         _ = Console.ReadLine();
 
         // 初期盤面の表示
         this.Board.WriteBoard();
 
+        TurnResult result = TurnResult.Continuation;
         while (true)
         {
             // 先攻プレイヤーのターン
-            if (this.Board.PlayTurn(firstPlayer)) break;
+            result = this.Board.PlayTurn(firstPlayer);
+            if (this.OnTurnFinished(result, firstPlayer)) break;
+
             // 後攻プレイヤーのターン
-            if (this.Board.PlayTurn(secondPlayer)) break;
+            result = this.Board.PlayTurn(secondPlayer);
+            if (this.OnTurnFinished(result, secondPlayer)) break;
         }
 
-        Console.Clear();
         Console.WriteLine("ゲーム終了です！");
+    }
+
+    /// <summary>
+    /// ターン終了後の処理
+    /// </summary>
+    /// <returns>引き分けまたは勝者がいればtrueを返す</returns>
+    private bool OnTurnFinished(TurnResult result, IPlayer player)
+    {
+        if (TurnResult.Win.Equals(result))
+        {
+            Console.WriteLine($"{player.Name}の勝ちです");
+            return true;
+        }
+        if (TurnResult.Draw.Equals(result))
+        {
+            Console.WriteLine("引き分けです");
+            return true;
+        }
+
+        return false;
     }
 
     /// <summary>
