@@ -1,19 +1,32 @@
 using TicTacToe.Components;
 using TicTacToe.Enums;
+using TicTacToe.Implements;
 using TicTacToe.Interfaces;
 
 internal class GameMaster
 {
+    #region フィールド、プロパティ
+
     private readonly Board Board;
+
+    private CpuLevel selectedLevel;
 
     private IPlayer? firstPlayer;
 
     private IPlayer? secondPlayer;
 
+    #endregion
+
+    #region コンストラクタ
+
     internal GameMaster()
     {
         this.Board = new Board();
     }
+
+    #endregion
+
+    #region 外部公開メソッド
 
     internal void SelectLevel()
     {
@@ -25,7 +38,8 @@ internal class GameMaster
 
             if (ValidateSelectedLevel(Console.ReadLine(), out int intLevel))
             {
-                Console.WriteLine($"{ConvertLevelToString(intLevel)}が選択されました");
+                this.selectedLevel = (CpuLevel)intLevel;
+                Console.WriteLine($"{this.ConvertLevelToString()}が選択されました");
                 break;
             }
             else
@@ -39,7 +53,15 @@ internal class GameMaster
     internal void SetPlayers()
     {
         this.firstPlayer = new Player();
-        this.secondPlayer = new WeakCpu();
+
+        if (CpuLevel.Weak.Equals(this.selectedLevel))
+        {
+            this.secondPlayer = new WeakCpu();
+        }
+        else
+        {
+            this.secondPlayer = new StrongCpu();
+        }
     }
 
     internal void Start()
@@ -60,15 +82,37 @@ internal class GameMaster
         while (true)
         {
             // 先攻プレイヤーのターン
-            result = this.Board.PlayTurn(firstPlayer);
+            result = this.PlayTurn(firstPlayer);
             if (this.OnTurnFinished(result, firstPlayer)) break;
 
             // 後攻プレイヤーのターン
-            result = this.Board.PlayTurn(secondPlayer);
+            result = this.PlayTurn(secondPlayer);
             if (this.OnTurnFinished(result, secondPlayer)) break;
         }
 
         Console.WriteLine("ゲーム終了です！");
+    }
+
+    #endregion
+
+    #region privateメソッド
+
+    private TurnResult PlayTurn(IPlayer player)
+    {
+        var insertState = player.DecidePlacement(this.Board);
+        this.Board.SetState(insertState);
+        this.Board.WriteBoard();
+
+        if (this.Board.CheckWinner(player))
+        {
+            return TurnResult.Win;
+        }
+        if (!this.Board.EmptyCells.Any())
+        {
+            return TurnResult.Draw;
+        }
+
+        return TurnResult.Continuation;
     }
 
     /// <summary>
@@ -99,8 +143,13 @@ internal class GameMaster
         return int.TryParse(selectedLevel, out intVal) && (intVal == 0 || intVal == 1);
     }
 
-    private static string ConvertLevelToString(int intLevel)
+    /// <summary>
+    /// 選択されたレベルを表示用文字列に変換
+    /// </summary>
+    private string ConvertLevelToString()
     {
-        return intLevel == 0 ? "初級" : "上級";
+        return CpuLevel.Weak.Equals(this.selectedLevel) ? "初級" : "上級";
     }
+
+    #endregion
 }

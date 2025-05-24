@@ -7,5 +7,5 @@ internal interface IPlayer
 {
     string Name { get; }
     CellValueType InputType { get; }
-    CellState Place(IEnumerable<int> emptyCells);
+    CellState DecidePlacement(Board board);
 }
