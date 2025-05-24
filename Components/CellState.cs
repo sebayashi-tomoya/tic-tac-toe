@@ -1,5 +1,7 @@
 using TicTacToe.Enums;
 
+namespace TicTacToe.Components;
+
 internal class CellState
 {
     internal int CellNumber;

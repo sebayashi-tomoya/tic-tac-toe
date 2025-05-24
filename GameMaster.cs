@@ -1,4 +1,4 @@
-using TicTacToe.Enums;
+using TicTacToe.Components;
 using TicTacToe.Interfaces;
 
 internal class GameMaster
@@ -57,20 +57,13 @@ internal class GameMaster
         while (true)
         {
             // 先攻プレイヤーのターン
-            if (this.PlayTurn(firstPlayer)) break;
+            if (this.Board.PlayTurn(firstPlayer)) break;
             // 後攻プレイヤーのターン
-            if (this.PlayTurn(secondPlayer)) break;
+            if (this.Board.PlayTurn(secondPlayer)) break;
         }
 
         Console.Clear();
         Console.WriteLine("ゲーム終了です！");
-    }
-
-    private bool PlayTurn(IPlayer player)
-    {
-        this.Board.SetState(player);
-        this.Board.WriteBoard();
-        return !Board.EmptyCells.Any();
     }
 
     /// <summary>

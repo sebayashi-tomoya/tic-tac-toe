@@ -1,6 +1,7 @@
-using System.Diagnostics;
 using TicTacToe.Enums;
 using TicTacToe.Interfaces;
+
+namespace TicTacToe.Components;
 
 internal class Board
 {
@@ -44,7 +45,14 @@ internal class Board
         }
     }
 
-    internal void SetState(IPlayer player)
+    internal bool PlayTurn(IPlayer player)
+    {
+        this.SetState(player);
+        this.WriteBoard();
+        return !this.EmptyCells.Any();
+    }
+
+    private void SetState(IPlayer player)
     {
         var insertState = player.Place(this.EmptyCells);
         this.CellStates.RemoveAll(x => x.CellNumber.Equals(insertState.CellNumber));

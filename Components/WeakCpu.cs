@@ -1,5 +1,7 @@
 using TicTacToe.Interfaces;
 
+namespace TicTacToe.Components;
+
 internal class WeakCpu : IPlayer
 {
     public CellState Place(IEnumerable<int> emptyCells)

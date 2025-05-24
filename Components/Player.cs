@@ -1,6 +1,8 @@
 using TicTacToe.Enums;
 using TicTacToe.Interfaces;
 
+namespace TicTacToe.Components;
+
 internal class Player : IPlayer
 {
     public CellState Place(IEnumerable<int> emptyCells)

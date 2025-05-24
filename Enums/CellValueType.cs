@@ -1,9 +1,8 @@
-namespace TicTacToe.Enums
+namespace TicTacToe.Enums;
+
+internal enum CellValueType
 {
-    internal enum CellValueType
-    {
-        Empty,
-        Circle,
-        Cross,
-    }
+    Empty,
+    Circle,
+    Cross,
 }

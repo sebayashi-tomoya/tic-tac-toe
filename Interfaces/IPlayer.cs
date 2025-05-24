@@ -1,7 +1,8 @@
-namespace TicTacToe.Interfaces
+using TicTacToe.Components;
+
+namespace TicTacToe.Interfaces;
+
+internal interface IPlayer
 {
-    internal interface IPlayer
-    {
-        CellState Place(IEnumerable<int> emptyCells);
-    }
+    CellState Place(IEnumerable<int> emptyCells);
 }
