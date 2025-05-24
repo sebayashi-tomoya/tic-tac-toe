@@ -35,7 +35,7 @@ internal class Board
         BOARD_SIZE * BOARD_SIZE,
     ];
 
-    /// <summary>真ん中のセル番号</summary>
+    /// <summary>真ん中のセル</summary>
     internal CellState CenterCell => this.CellStates.First(x =>
         x.CellNumber.Equals((int)Math.Ceiling((double)this.CellCount / 2)));
 

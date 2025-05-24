@@ -28,6 +28,9 @@ internal class GameMaster
 
     #region 外部公開メソッド
 
+    /// <summary>
+    /// 難易度の選択
+    /// </summary>
     internal void SelectLevel()
     {
         // 難易度選択
@@ -36,34 +39,63 @@ internal class GameMaster
             Console.WriteLine("難易度を選んでください");
             Console.Write("【初級】0、【上級】1 : ");
 
-            if (ValidateSelectedLevel(Console.ReadLine(), out int intLevel))
+            if (ValidateSelectedInt(Console.ReadLine(), out int intLevel))
             {
+                var strLevel = CpuLevel.Weak.Equals(this.selectedLevel) ? "初級" : "上級";
                 this.selectedLevel = (CpuLevel)intLevel;
-                Console.WriteLine($"{this.ConvertLevelToString()}が選択されました");
+                Console.Clear();
+                Console.WriteLine($"{strLevel}が選択されました");
                 break;
             }
             else
             {
-                Console.WriteLine("入力エラーです");
-                Console.WriteLine("半角で0または1を入力してください");
+                WriteErrorMessage();
             }
         }
     }
 
+    /// <summary>
+    /// 先攻後攻の選択
+    /// </summary>
     internal void SetPlayers()
     {
-        this.firstPlayer = new Player();
+        Console.WriteLine("先攻・後攻を選んで下さい");
+        Console.Write("【先攻】0、【後攻】1 : ");
 
-        if (CpuLevel.Weak.Equals(this.selectedLevel))
+        bool isUserFirst;
+        while (true)
         {
-            this.secondPlayer = new WeakCpu();
+            if (ValidateSelectedInt(Console.ReadLine(), out int intTurn))
+            {
+                var strTurn = intTurn == 0 ? "先攻" : "後攻";
+                isUserFirst = intTurn == 0;
+                Console.WriteLine($"{strTurn}が選択されました");
+                break;
+            }
+            else
+            {
+                WriteErrorMessage();
+            }
+        }
+
+        IPlayer cpu = CpuLevel.Weak.Equals(this.selectedLevel) ?
+            new WeakCpu() : new StrongCpu();
+        if (isUserFirst)
+        {
+            this.firstPlayer = new Player();
+            this.secondPlayer = cpu;
         }
         else
         {
-            this.secondPlayer = new StrongCpu();
+            this.firstPlayer = cpu;
+            this.secondPlayer = new Player();
         }
     }
 
+    /// <summary>
+    /// ゲームのメイン処理
+    /// </summary>
+    /// <exception cref="InvalidOperationException"></exception>
     internal void Start()
     {
         if (this.firstPlayer is null || this.secondPlayer is null)
@@ -97,6 +129,9 @@ internal class GameMaster
 
     #region privateメソッド
 
+    /// <summary>
+    /// 1ターン中の処理
+    /// </summary>
     private TurnResult PlayTurn(IPlayer player)
     {
         var insertState = player.DecidePlacement(this.Board);
@@ -136,19 +171,20 @@ internal class GameMaster
     }
 
     /// <summary>
-    /// レベル選択の適正チェック
+    /// 0 or 1 の場合の入力値チェック
     /// </summary>
-    private static bool ValidateSelectedLevel(string? selectedLevel, out int intVal)
+    private static bool ValidateSelectedInt(string? selectedLevel, out int intVal)
     {
         return int.TryParse(selectedLevel, out intVal) && (intVal == 0 || intVal == 1);
     }
 
     /// <summary>
-    /// 選択されたレベルを表示用文字列に変換
+    /// 入力エラー時の出力
     /// </summary>
-    private string ConvertLevelToString()
+    private static void WriteErrorMessage()
     {
-        return CpuLevel.Weak.Equals(this.selectedLevel) ? "初級" : "上級";
+        Console.WriteLine("入力エラーです");
+        Console.WriteLine("半角で0または1を入力してください");
     }
 
     #endregion
