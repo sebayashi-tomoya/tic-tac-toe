@@ -4,12 +4,18 @@ using TicTacToe.Interfaces;
 
 namespace TicTacToe.Implements;
 
-internal class Player : IPlayer
+/// <summary>
+/// ユーザー操作のプレイヤー
+/// </summary>
+internal class User : IPlayer
 {
+    /// <inheritdoc/>
     public string Name => "あなた";
 
+    /// <inheritdoc/>
     public CellValueType InputType => CellValueType.Circle;
 
+    /// <inheritdoc/>
     public CellState DecidePlacement(Board board)
     {
         while (true)

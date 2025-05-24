@@ -3,6 +3,9 @@ using TicTacToe.Enums;
 using TicTacToe.Implements;
 using TicTacToe.Interfaces;
 
+/// <summary>
+/// ゲーム中の各処理を管理
+/// </summary>
 internal class GameMaster
 {
     #region フィールド、プロパティ
@@ -82,13 +85,13 @@ internal class GameMaster
             new WeakCpu() : new StrongCpu();
         if (isUserFirst)
         {
-            this.firstPlayer = new Player();
+            this.firstPlayer = new User();
             this.secondPlayer = cpu;
         }
         else
         {
             this.firstPlayer = cpu;
-            this.secondPlayer = new Player();
+            this.secondPlayer = new User();
         }
     }
 

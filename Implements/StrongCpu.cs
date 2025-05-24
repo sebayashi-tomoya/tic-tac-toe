@@ -4,12 +4,18 @@ using TicTacToe.Interfaces;
 
 namespace TicTacToe.Implements;
 
+/// <summary>
+/// 上級CPU
+/// </summary>
 internal class StrongCpu : IPlayer
 {
+    /// <inheritdoc/>
     public string Name => "CPU";
 
+    /// <inheritdoc/>
     public CellValueType InputType => CellValueType.Cross;
 
+    /// <inheritdoc/>
     public CellState DecidePlacement(Board board)
     {
         // リーチになっているセルがあれば優先的に埋める
@@ -50,9 +56,11 @@ internal class StrongCpu : IPlayer
             this.InputType);
     }
 
+    /// <summary>
+    /// intのコレクションの数値の範囲でランダムに番号を生成
+    /// </summary>
     private static int CreateRandomNum(IEnumerable<int> cellNumbers)
     {
-        // 空白セルからランダムに一つセルを抽出する
         var randomNum = new Random().Next(cellNumbers.Count());
         return cellNumbers.ElementAt(randomNum);
     }

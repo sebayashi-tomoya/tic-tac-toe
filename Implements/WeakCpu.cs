@@ -4,12 +4,18 @@ using TicTacToe.Interfaces;
 
 namespace TicTacToe.Implements;
 
+/// <summary>
+/// 初級CPU
+/// </summary>
 internal class WeakCpu : IPlayer
 {
+    /// <inheritdoc/>
     public string Name => "CPU";
 
+    /// <inheritdoc/>
     public CellValueType InputType => CellValueType.Cross;
 
+    /// <inheritdoc/>
     public CellState DecidePlacement(Board board)
     {
         // 空白セルからランダムに一つセルを抽出する

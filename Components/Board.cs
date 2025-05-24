@@ -3,6 +3,9 @@ using TicTacToe.Interfaces;
 
 namespace TicTacToe.Components;
 
+/// <summary>
+/// 盤面の各処理を管理
+/// </summary>
 internal class Board
 {
     #region 定数
@@ -46,6 +49,9 @@ internal class Board
 
     #region コンストラクタ
 
+    /// <summary>
+    /// コンストラクタ
+    /// </summary>
     internal Board()
     {
         this.InitializeStates();
@@ -116,6 +122,10 @@ internal class Board
         return false;
     }
 
+    /// <summary>
+    /// リーチの判定&リーチなら残り1マスのインデックスを返す
+    /// </summary>
+    /// <returns>リーチでない場合はnullが返る</returns>
     internal int? GetReachCellNum()
     {
         foreach (var pattern in this.winPatterns)
@@ -207,6 +217,9 @@ internal class Board
         return row * BOARD_SIZE + col + 1;
     }
 
+    /// <summary>
+    /// 行間のラインを作成
+    /// </summary>
     private static void WriteRowLine()
     {
         for (int i = 0; i < BOARD_SIZE; i++)
