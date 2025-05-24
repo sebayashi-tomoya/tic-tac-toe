@@ -16,7 +16,7 @@ internal class Player : IPlayer
             var startNum = BoardSettings.CELL_COUNT - (BoardSettings.CELL_COUNT - 1);
             Console.WriteLine($"{startNum} ~ {BoardSettings.CELL_COUNT} のどこに置きますか？");
 
-            if (ValidateInputCell(Console.ReadLine(), out int inputNum))
+            if (ValidateInputCell(Console.ReadLine(), emptyCells, out int inputNum))
             {
                 return new CellState(inputNum, CellValueType.Circle);
             }
@@ -28,8 +28,11 @@ internal class Player : IPlayer
         }
     }
 
-    private static bool ValidateInputCell(string? inputNum, out int cellNum)
+    private static bool ValidateInputCell(string? inputNum, IEnumerable<int> emptyCells, out int cellNum)
     {
-        return int.TryParse(inputNum, out cellNum) && cellNum <= BoardSettings.CELL_COUNT && cellNum > 0;
+        return int.TryParse(inputNum, out cellNum)
+            && emptyCells.Contains(cellNum)
+            && cellNum <= BoardSettings.CELL_COUNT
+            && cellNum > 0;
     }
 }
