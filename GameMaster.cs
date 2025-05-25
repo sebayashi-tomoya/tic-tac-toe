@@ -89,9 +89,10 @@ internal class GameMaster
         // 初期盤面の表示
         this.Board.WriteBoard();
 
-        TurnResult result = TurnResult.Continuation;
         while (true)
         {
+            TurnResult result;
+
             // 先攻プレイヤーのターン
             result = this.PlayTurn(firstPlayer);
             if (OnTurnFinished(result, firstPlayer)) break;
@@ -213,7 +214,8 @@ internal class GameMaster
     /// </summary>
     private static bool ValidateSelectedInt(string? selectedLevel, out int intVal)
     {
-        return int.TryParse(selectedLevel, out intVal) && (intVal == 0 || intVal == 1);
+        return int.TryParse(selectedLevel, out intVal)
+            && (intVal == 0 || intVal == 1);
     }
 
     /// <summary>
