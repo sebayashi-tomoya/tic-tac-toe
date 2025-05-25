@@ -103,6 +103,7 @@ internal class Board
     /// <summary>
     /// 勝者判定
     /// </summary>
+    /// <returns>勝者がいればtrueが返る</returns>
     internal bool CheckWinner(IPlayer player)
     {
         foreach (var pattern in this.winPatterns)
@@ -123,9 +124,9 @@ internal class Board
     }
 
     /// <summary>
-    /// リーチの判定&リーチなら残り1マスのインデックスを返す
+    /// リーチ判定
     /// </summary>
-    /// <returns>リーチでない場合はnullが返る</returns>
+    /// <returns>リーチなら残り1セルの番号、リーチでなければnull</returns>
     internal int? GetReachCellNum()
     {
         foreach (var pattern in this.winPatterns)
@@ -185,8 +186,8 @@ internal class Board
 
             for (int j = 0; j < BOARD_SIZE; j++)
             {
-                rowWinPattern[j] = this.ConvertToCellNum(i, j);
-                colWinPattern[j] = this.ConvertToCellNum(j, i);
+                rowWinPattern[j] = ConvertToCellNum(i, j);
+                colWinPattern[j] = ConvertToCellNum(j, i);
             }
             this.winPatterns.Add(rowWinPattern);
             this.winPatterns.Add(colWinPattern);
@@ -196,7 +197,7 @@ internal class Board
         var mainDiagonal = new int[BOARD_SIZE];
         for (int i = 0; i < BOARD_SIZE; i++)
         {
-            mainDiagonal[i] = this.ConvertToCellNum(i, i);
+            mainDiagonal[i] = ConvertToCellNum(i, i);
         }
         this.winPatterns.Add(mainDiagonal);
 
@@ -204,7 +205,7 @@ internal class Board
         var antiDiagonal = new int[BOARD_SIZE];
         for (int i = 0; i < BOARD_SIZE; i++)
         {
-            antiDiagonal[i] = this.ConvertToCellNum(i, BOARD_SIZE - 1 - i);
+            antiDiagonal[i] = ConvertToCellNum(i, BOARD_SIZE - 1 - i);
         }
         this.winPatterns.Add(antiDiagonal);
     }
@@ -212,7 +213,7 @@ internal class Board
     /// <summary>
     /// 2次元座標からセル番号に変換
     /// </summary>
-    private int ConvertToCellNum(int row, int col)
+    private static int ConvertToCellNum(int row, int col)
     {
         return row * BOARD_SIZE + col + 1;
     }
