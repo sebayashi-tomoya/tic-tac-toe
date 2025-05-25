@@ -25,8 +25,6 @@ internal class StrongCpu : IPlayer
             return new CellState((int)reachCell, this.InputType);
         }
 
-        var a = (int)Math.Ceiling((double)board.CellCount / 2);
-
         // 真ん中が空いていれば優先的に埋める
         if (CellValueType.Empty.Equals(board.CenterCell?.ValueType))
         {
