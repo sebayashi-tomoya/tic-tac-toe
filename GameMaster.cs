@@ -12,6 +12,8 @@ internal class GameMaster
 
     private readonly Board Board;
 
+    private PlayMode playMode;
+
     private CpuLevel selectedLevel;
 
     private IPlayer? firstPlayer;
@@ -32,20 +34,95 @@ internal class GameMaster
     #region 外部公開メソッド
 
     /// <summary>
+    /// ゲームモード選択
+    /// </summary>
+    internal void SelectMode()
+    {
+        Console.WriteLine("ゲームモードを選んでください");
+        Console.WriteLine("【PvC】0、【PvP】1 : ");
+
+        while (true)
+        {
+            if (ValidateSelectedInt(Console.ReadLine(), out int intMode))
+            {
+                this.playMode = (PlayMode)intMode;
+                Console.Clear();
+                Console.WriteLine(
+                    PlayMode.PVC.Equals(this.playMode) ?
+                    "CPUと対戦します" : "ユーザー同時で対戦します");
+                break;
+            }
+            else
+            {
+                WriteErrorMessage();
+            }
+        }
+    }
+
+    /// <summary>
+    /// ゲームのメイン処理
+    /// </summary>
+    /// <exception cref="InvalidOperationException"></exception>
+    internal void Start()
+    {
+        if (PlayMode.PVC.Equals(this.playMode))
+        {
+            this.SelectLevel();
+            this.SelectTurn();
+        }
+        else
+        {
+            this.firstPlayer = new User("1P", CellValueType.Circle);
+            this.secondPlayer = new User("2P", CellValueType.Cross);
+        }
+
+        // 各プレイヤーが設定されていなければ実装ミスのため例外
+        if (this.firstPlayer is null || this.secondPlayer is null)
+        {
+            throw new InvalidOperationException();
+        }
+
+        Console.WriteLine("ゲームを開始します!");
+        Console.Write("Enterキーを押して下さい");
+        _ = Console.ReadLine();
+
+        // 初期盤面の表示
+        this.Board.WriteBoard();
+
+        TurnResult result = TurnResult.Continuation;
+        while (true)
+        {
+            // 先攻プレイヤーのターン
+            result = this.PlayTurn(firstPlayer);
+            if (OnTurnFinished(result, firstPlayer)) break;
+
+            // 後攻プレイヤーのターン
+            result = this.PlayTurn(secondPlayer);
+            if (OnTurnFinished(result, secondPlayer)) break;
+        }
+
+        Console.WriteLine("ゲーム終了です！");
+    }
+
+    #endregion
+
+    #region privateメソッド
+
+    /// <summary>
     /// 難易度の選択
     /// </summary>
-    internal void SelectLevel()
+    private void SelectLevel()
     {
+        Console.WriteLine("難易度を選んでください");
+        Console.Write("【初級】0、【上級】1 : ");
+
         // 難易度選択
         while (true)
         {
-            Console.WriteLine("難易度を選んでください");
-            Console.Write("【初級】0、【上級】1 : ");
-
             if (ValidateSelectedInt(Console.ReadLine(), out int intLevel))
             {
-                var strLevel = CpuLevel.Weak.Equals(this.selectedLevel) ? "初級" : "上級";
                 this.selectedLevel = (CpuLevel)intLevel;
+                var strLevel = CpuLevel.Weak.Equals(this.selectedLevel) ? "初級" : "上級";
                 Console.Clear();
                 Console.WriteLine($"{strLevel}が選択されました");
                 break;
@@ -60,7 +137,8 @@ internal class GameMaster
     /// <summary>
     /// 先攻後攻の選択
     /// </summary>
-    internal void SetPlayers()
+    /// <remarks>PVCの場合のみ呼ばれる想定</remarks>
+    private void SelectTurn()
     {
         Console.WriteLine("先攻・後攻を選んで下さい");
         Console.Write("【先攻】0、【後攻】1 : ");
@@ -81,56 +159,13 @@ internal class GameMaster
             }
         }
 
+        IPlayer user = new User("あなた", CellValueType.Circle);
         IPlayer cpu = CpuLevel.Weak.Equals(this.selectedLevel) ?
             new WeakCpu() : new StrongCpu();
-        if (isUserFirst)
-        {
-            this.firstPlayer = new User();
-            this.secondPlayer = cpu;
-        }
-        else
-        {
-            this.firstPlayer = cpu;
-            this.secondPlayer = new User();
-        }
+
+        this.firstPlayer = isUserFirst ? user : cpu;
+        this.secondPlayer = isUserFirst ? cpu : user;
     }
-
-    /// <summary>
-    /// ゲームのメイン処理
-    /// </summary>
-    /// <exception cref="InvalidOperationException"></exception>
-    internal void Start()
-    {
-        if (this.firstPlayer is null || this.secondPlayer is null)
-        {
-            throw new InvalidOperationException();
-        }
-
-        Console.WriteLine("ゲームを開始します!");
-        Console.Write("Enterキーを押して下さい");
-        _ = Console.ReadLine();
-
-        // 初期盤面の表示
-        this.Board.WriteBoard();
-
-        TurnResult result = TurnResult.Continuation;
-        while (true)
-        {
-            // 先攻プレイヤーのターン
-            result = this.PlayTurn(firstPlayer);
-            if (this.OnTurnFinished(result, firstPlayer)) break;
-
-            // 後攻プレイヤーのターン
-            result = this.PlayTurn(secondPlayer);
-            if (this.OnTurnFinished(result, secondPlayer)) break;
-        }
-
-        Console.WriteLine("ゲーム終了です！");
-    }
-
-    #endregion
-
-    #region privateメソッド
 
     /// <summary>
     /// 1ターン中の処理
@@ -157,7 +192,7 @@ internal class GameMaster
     /// ターン終了後の処理
     /// </summary>
     /// <returns>引き分けまたは勝者がいればtrueを返す</returns>
-    private bool OnTurnFinished(TurnResult result, IPlayer player)
+    private static bool OnTurnFinished(TurnResult result, IPlayer player)
     {
         if (TurnResult.Win.Equals(result))
         {

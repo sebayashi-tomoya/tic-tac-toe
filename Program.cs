@@ -7,8 +7,7 @@ namespace TicTacToe
         {
             var master = new GameMaster();
             Console.WriteLine("○×ゲームへようこそ！");
-            master.SelectLevel();
-            master.SetPlayers();
+            master.SelectMode();
             master.Start();
         }
     }

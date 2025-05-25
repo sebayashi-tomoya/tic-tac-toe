@@ -10,10 +10,16 @@ namespace TicTacToe.Implements;
 internal class User : IPlayer
 {
     /// <inheritdoc/>
-    public string Name => "あなた";
+    public string Name { get; set; }
 
     /// <inheritdoc/>
-    public CellValueType InputType => CellValueType.Circle;
+    public CellValueType InputType { get; set; }
+
+    internal User(string name, CellValueType cellValueType)
+    {
+        this.Name = name;
+        this.InputType = cellValueType;
+    }
 
     /// <inheritdoc/>
     public CellState DecidePlacement(Board board)
