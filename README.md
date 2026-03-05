@@ -1,5 +1,98 @@
 # クラス構成
 
+**全体**
+
+```mermaid
+classDiagram
+    direction TB
+
+    class GameMaster {
+        -Board Board
+        -PlayMode playMode
+        -CpuLevel selectedLevel
+        -IPlayer? firstPlayer
+        -IPlayer? secondPlayer
+        +GameMaster()
+        +SelectMode()
+        +Start()
+    }
+
+    class Board {
+        -List~int[]~ winPatterns
+        +List~CellState~ CellStates
+        +IEnumerable~int~ EmptyCells
+        +int CellCount
+        +int[] CornerNumbers
+        +CellState CenterCell
+        +Board()
+        +WriteBoard()
+        +SetState(CellState)
+        +CheckWinner(IPlayer) bool
+        +GetReachCellNum() int?
+    }
+
+    class IPlayer {
+        <<interface>>
+        +string Name
+        +CellValueType InputType
+        +DecidePlacement(Board) CellState
+    }
+
+    class CellState {
+        +int CellNumber
+        +CellValueType ValueType
+        +CellState(int, CellValueType)
+        +GetSymbol() string
+    }
+
+    class PlayMode {
+        <<enumeration>>
+        PVC
+        PVP
+    }
+
+    class CpuLevel {
+        <<enumeration>>
+        Weak
+        Strong
+    }
+
+    class TurnResult {
+        <<enumeration>>
+        Continuation
+        Win
+        Draw
+    }
+
+    class CellValueType {
+        <<enumeration>>
+        Empty
+        Circle
+        Cross
+    }
+
+    GameMaster "1" --> "1" Board : 保持
+    GameMaster --> IPlayer : 先攻/後攻
+    GameMaster --> PlayMode : 利用
+    GameMaster --> CpuLevel : 利用
+    GameMaster --> TurnResult : 利用
+
+    Board "1" --> "*" CellState : 保持
+    Board ..> IPlayer : CheckWinner
+    Board ..> CellValueType : 利用
+
+    IPlayer ..> Board : DecidePlacement引数
+    IPlayer ..> CellState : DecidePlacement戻り値
+    IPlayer ..> CellValueType : InputType
+
+    CellState --> CellValueType : 利用
+
+```
+
+<br/>
+
+**IPlayer の実装クラスの関係**
+
 ```mermaid
 classDiagram
 namespace TicTacToe_Interfaces {
@@ -39,16 +132,16 @@ class IPlayer {
 
 <br/>
 
-- IPlayer<br/>
-  ゲームプレイヤー・CPU 両者が持つ共通の振る舞いをインターフェースとして定義<br/>
+- **IPlayer**<br/>
+  ユーザー・CPU 両者が持つ共通の振る舞いをインターフェースとして定義<br/>
 
-- User<br/>
-  ゲームプレイヤーの振る舞いを実装<br/>
+- **User**<br/>
+  ユーザーの振る舞いを実装<br/>
 
-- WeakPlayer<br/>
+- **WeakPlayer**<br/>
   空いているマスを埋めるだけの弱めの CPU の振る舞いを実装<br/>
 
-- StrongPlayer<br/>
+- **StrongPlayer**<br/>
   真ん中、四隅、リーチのマスを優先的に埋める強めの CPU の振る舞いを実装<br/>
 
 # シーケンス
